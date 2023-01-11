@@ -61,6 +61,7 @@ own_. [sherifabdlnaby/elastdocker][elastdocker] is one example among others of p
    * [How to configure Elasticsearch](#how-to-configure-elasticsearch)
    * [How to configure Kibana](#how-to-configure-kibana)
    * [How to configure Logstash](#how-to-configure-logstash)
+   * [How to configure Filebeat](#how-to-configure-filebeat)
    * [How to disable paid features](#how-to-disable-paid-features)
    * [How to scale out the Elasticsearch cluster](#how-to-scale-out-the-elasticsearch-cluster)
    * [How to re-execute the setup](#how-to-re-execute-the-setup)
@@ -317,6 +318,29 @@ logstash:
 Please refer to the following documentation page for more details about how to configure Logstash inside Docker
 containers: [Configuring Logstash for Docker][ls-docker].
 
+### How to configure Filebeat
+
+The Filebeat configuration is stored in [`filebeat/config/filebeat.yml`][config-fb] and have to be configured within the correct permissions if `DOCKER_DATA_ROOT` env variable needs superuser access:
+
+```bash
+sudo chown root:root filebeat/config/filebeat.yml
+sudo chmod go-w filebeat/config/filebeat.yml
+```
+
+You can also specify the options you want to override by setting environment variables inside the Compose file:
+
+```yml
+filebeat:
+
+  environment:
+      ELASTIC_USERNAME: ${ELASTIC_USERNAME:-elastic}
+      ELASTIC_PASSWORD: ${ELASTIC_PASSWORD:-}
+      DOCKER_DATA_ROOT: ${DOCKER_DATA_ROOT:-}
+```
+
+Please refer to the following documentation page for more details about how to configure Filebeat inside Docker
+containers: [Configuring Filebeat for Docker][fb-docker].
+
 ### How to disable paid features
 
 Switch the value of Elasticsearch's `xpack.license.self_generated.type` setting from `trial` to `basic` (see [License
@@ -477,9 +501,11 @@ See the following Wiki pages:
 [config-es]: ./elasticsearch/config/elasticsearch.yml
 [config-kbn]: ./kibana/config/kibana.yml
 [config-ls]: ./logstash/config/logstash.yml
+[config-fb]: ./filebeat/config/filebeat.yml
 
 [es-docker]: https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html
 [kbn-docker]: https://www.elastic.co/guide/en/kibana/current/docker.html
 [ls-docker]: https://www.elastic.co/guide/en/logstash/current/docker-config.html
+[fb-docker]: https://www.elastic.co/guide/en/beats/filebeat/current/running-on-docker.html
 
 [upgrade]: https://www.elastic.co/guide/en/elasticsearch/reference/current/setup-upgrade.html
